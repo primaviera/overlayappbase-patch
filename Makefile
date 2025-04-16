@@ -21,9 +21,9 @@ WUMS_ROOT := $(DEVKITPRO)/wums
 # INCLUDES is a list of directories containing header files
 #-------------------------------------------------------------------------------
 TARGET		:=	overlayappbase-patch
-BUILD			:=	build
+BUILD		:=	build
 SOURCES		:=	source external/libwupsxx/src
-DATA			:=	data
+DATA		:=	data
 INCLUDES	:=	include external/libwupsxx/include
 
 #-------------------------------------------------------------------------------
@@ -39,7 +39,17 @@ CXXFLAGS	:= $(CFLAGS) -std=c++20
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-g $(ARCH) $(RPXSPECS) -Wl,-Map,$(notdir $*.map) -T$(WUMS_ROOT)/share/libkernel.ld $(WUPSSPECS)
 
-LIBS	:= -lwups -lwut -lkernel
+ifeq ($(DEBUG),1)
+CXXFLAGS += -DDEBUG -g
+CFLAGS += -DDEBUG -g
+endif
+
+ifeq ($(DEBUG),VERBOSE)
+CXXFLAGS += -DDEBUG -DVERBOSE_DEBUG -g
+CFLAGS += -DDEBUG -DVERBOSE_DEBUG -g
+endif
+
+LIBS	:= -lkernel -lfunctionpatcher -lwups -lwut
 
 #-------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level
