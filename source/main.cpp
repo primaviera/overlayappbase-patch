@@ -31,7 +31,7 @@ ON_APPLICATION_START()
     auto title = OSGetTitleID();
     if (cfg::patch_men) {
         if (title == 0x5001010040000 || title == 0x5001010040100 || title == 0x5001010040200) {
-            patches::perform_men_patches(cfg::patch_men);
+            patches::perform_men_patches(true);
         }
     }
 }

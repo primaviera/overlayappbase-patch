@@ -15,6 +15,8 @@ void bool_changed(ConfigItemBoolean* item, bool new_value)
         patch_men = new_value;
     if (std::string_view("patch_hbm") == item->identifier)
         patch_hbm = new_value;
+
+    WUPSStorageAPI::Store(item->identifier, new_value);
 }
 
 WUPSConfigAPICallbackStatus open(WUPSConfigCategoryHandle root_handle)

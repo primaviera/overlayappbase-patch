@@ -1,5 +1,4 @@
-#ifndef CFG_HPP
-#define CFG_HPP
+#pragma once
 
 namespace cfg {
 
@@ -9,5 +8,3 @@ extern bool patch_hbm;
 void init();
 
 } // namespace cfg
-
-#endif

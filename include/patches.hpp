@@ -16,8 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PATCHES_HPP
-#define PATCHES_HPP
+#pragma once
 
 namespace patches {
 
@@ -25,5 +24,3 @@ void perform_men_patches(bool enable);
 void perform_hbm_patches(bool enable);
 
 } // namespace patches
-
-#endif
