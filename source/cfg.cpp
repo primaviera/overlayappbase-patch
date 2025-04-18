@@ -15,8 +15,6 @@ void bool_changed(ConfigItemBoolean* item, bool new_value)
         patch_men = new_value;
     if (std::string_view("patch_hbm") == item->identifier)
         patch_hbm = new_value;
-
-    WUPSStorageAPI::Store(item->identifier, new_value);
 }
 
 WUPSConfigAPICallbackStatus open(WUPSConfigCategoryHandle root_handle)
@@ -41,27 +39,30 @@ WUPSConfigAPICallbackStatus open(WUPSConfigCategoryHandle root_handle)
 
 void close()
 {
-    WUPSStorageAPI::SaveStorage();
+    DEBUG_FUNCTION_LINE_ERR("Failed to close storage");
 }
+
+#define LOAD(key, default_value)                                                                             \
+    if ((res = WUPSStorageAPI::GetOrStoreDefault(#key, key, default_value)) != WUPS_STORAGE_ERROR_SUCCESS) { \
+        DEBUG_FUNCTION_LINE_ERR("GetOrStoreDefault failed: %s (%d)", WUPSStorageAPI_GetStatusStr(res), res); \
+    }
 
 void init()
 {
     WUPSConfigAPIOptionsV1 options = { .name = "overlayappbase-patch" };
-    if (WUPSConfigAPI_Init(options, open, close) != WUPSCONFIG_API_RESULT_SUCCESS) {
+    if (WUPSConfigAPI_Init(options, open, close)) {
         DEBUG_FUNCTION_LINE_ERR("Failed to init config api");
     }
 
     WUPSStorageError res;
-    if ((res = WUPSStorageAPI::GetOrStoreDefault("patch_men", patch_men, false)) != WUPS_STORAGE_ERROR_SUCCESS) {
-        DEBUG_FUNCTION_LINE_ERR("GetOrStoreDefault failed: %s (%d)", WUPSStorageAPI_GetStatusStr(res), res);
-    }
-    if ((res = WUPSStorageAPI::GetOrStoreDefault("patch_hbm", patch_hbm, false)) != WUPS_STORAGE_ERROR_SUCCESS) {
-        DEBUG_FUNCTION_LINE_ERR("GetOrStoreDefault failed: %s (%d)", WUPSStorageAPI_GetStatusStr(res), res);
-    }
+    LOAD(patch_men, false);
+    LOAD(patch_hbm, false);
 
     if ((res = WUPSStorageAPI::SaveStorage()) != WUPS_STORAGE_ERROR_SUCCESS) {
         DEBUG_FUNCTION_LINE_ERR("SaveStorage failed: %s (%d)", WUPSStorageAPI_GetStatusStr(res), res);
     }
 }
+
+#undef LOAD
 
 }
